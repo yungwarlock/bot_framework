@@ -12,6 +12,7 @@ Every conversation can be defined as a Directed Acyclic Graph (DAG) consisting o
 
 * Install poetry
 * Run `poetry install`
+* Run the sample project with `poetry run python bot_framework`
 
 ## Authors
 
