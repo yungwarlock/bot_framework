@@ -4,7 +4,7 @@ from typing import List, Dict, Callable
 from colorama import Fore, Style
 
 
-class Pipeline:
+class Pipeline(object):
     """Pipeline is a class that holds the nodes."""
 
     def __init__(self):
@@ -44,7 +44,7 @@ class Pipeline:
             if debug and node.documentation:
                 print(Fore.YELLOW + "[" + node.documentation + "]" + Style.RESET_ALL, end=" ")
 
-            node._invoke(self.read, self.write)
+            node._invoke(self.read, self.write, debug=debug)
 
 
     def _add_node(self, node):
@@ -63,6 +63,7 @@ class Pipeline:
         """Adds a node to the pipeline."""
 
         return self._add_node(other)
+
 
 class Node:
     """Base unit of conversation."""
@@ -84,7 +85,7 @@ class Output(Node):
         self.message = message
         super().__init__()
 
-    def _invoke(self, _, write):
+    def _invoke(self, _, write, *args, **kwargs):
         """Outputs the message."""
 
         write(self.message)
@@ -97,7 +98,7 @@ class Input(Node):
         self.prompt = prompt
         super().__init__()
 
-    def _invoke(self, read, _):
+    def _invoke(self, read, _, *args, **kwargs):
         """Takes an input from the user."""
 
         user_input = read(f"{self.prompt}> ")
@@ -116,7 +117,49 @@ class Lambda(Node):
         self.func = func
         super().__init__()
 
-    def _invoke(self, read, write):
+    def _invoke(self, read, write, *args, **kwargs):
         """Executes the function."""
 
         self.func(read, write)
+
+
+class Router(Node):
+    """Router is a pipeline that can provides multiple routes to different nodes
+    
+    The router can be used to create a menu system.
+
+    Example:
+        Router(
+            prompt=lambda read, write: write("What would you like to do?"),
+            outcomes=["Hello", "World", "Exit"],
+            routes={
+                "Hello": Output("Hello") | Output("Guys"),
+                "World": Output("World") | Output("Guys"),
+                "Exit": Output("Goodbye") | Output("Guys"),
+            }
+        )
+    """
+
+    def __init__(self, prompt: str, outcomes: List[str], routes: Dict[str, Pipeline]):
+        self.prompt = prompt
+        self.routes = routes
+        self.outcomes = outcomes
+    
+    def _invoke(self, read, write, *args, **kwargs):
+        """Outputs the message."""
+
+        _prompt = f"""
+{self.prompt}
+        
+{", ".join([x for x in self.outcomes])}
+> """
+
+        while True:
+            user_input = read(_prompt)
+
+            if user_input not in self.outcomes:
+                write("Invalid input")
+                continue
+            break
+
+        self.routes[user_input].run(*args, **kwargs)
