@@ -2,6 +2,7 @@ from bot_framework.nodes import (
     Input,
     Router,
     Output,
+    Sleep,
     Lambda,
     Pipeline,
 )
@@ -9,6 +10,7 @@ from bot_framework.nodes import (
 __all__ = [
     "Input",
     "Output",
+    "Sleep",
     "Lambda",
     "Router",
     "Pipeline",

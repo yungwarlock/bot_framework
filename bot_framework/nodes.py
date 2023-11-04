@@ -161,3 +161,18 @@ class Router(Node):
             break
 
         self.routes[user_input].run(*args, **kwargs)
+
+
+class Sleep(Node):
+    """Sleep is a node that pauses the pipeline for a given amount of time."""
+
+    def __init__(self, seconds: int, message: str):
+        self.seconds = seconds
+        self.message = message
+        super().__init__()
+
+    def _invoke(self, read, write, *args, **kwargs):
+        """Sleeps the pipeline."""
+
+        write(self.message)
+        time.sleep(self.seconds)
