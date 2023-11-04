@@ -1,7 +1,7 @@
 from bot_framework import Output, Input, Pipeline, Lambda, Router, Sleep
 
 graph = (
-    "Entry point" >> Pipeline()
+    "Entry point" >> Pipeline(delay_seconds=1)
     | "Prints Hello World" >> Output(message="Hello")
     | "Asks for my name" >> Input("What is your name?")
     | "Greets user" >> Lambda(lambda read, write: write(f"Hello {read()}"))

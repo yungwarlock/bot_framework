@@ -1,3 +1,4 @@
+import time
 from queue import Queue
 from typing import List, Dict, Callable
 
@@ -7,9 +8,10 @@ from colorama import Fore, Style
 class Pipeline(object):
     """Pipeline is a class that holds the nodes."""
 
-    def __init__(self):
+    def __init__(self, delay_seconds: int = 1):
         self.documentation = None
         self.nodes: List[Node] = []
+        self.delay_seconds = delay_seconds
 
         self._named_cache: Dict[str, Queue[str]] = {}
 
@@ -46,8 +48,8 @@ class Pipeline(object):
                     Fore.YELLOW + "[" + node.documentation + "]" + Style.RESET_ALL,
                     end=" ",
                 )
-
             node._invoke(self.read, self.write, debug=debug)
+            time.sleep(self.delay_seconds)
 
     def _add_node(self, node):
         """Adds a node to the pipeline."""
@@ -153,7 +155,9 @@ class Router(Node):
 > """
 
         while True:
-            user_input = read(_prompt)
+            read(_prompt)
+
+            user_input = read()
 
             if user_input not in self.routes.keys():
                 write("Invalid input")
