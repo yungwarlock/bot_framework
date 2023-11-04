@@ -2,18 +2,15 @@ from colorama import Fore, Style
 
 
 class Node:
-    """
-    Base unit of conversation.
-    """
+    """Base unit of conversation."""
     
     def __init__(self):
         self.nodes = []
         self.documentation = None
 
     def run(self, debug=False, *args, **kwargs):
-        """
-        Runs the node.
-        """
+        """Runs the node."""
+
         if debug and self.documentation:
             print(Fore.YELLOW + "[" + self.documentation + "]" + Style.RESET_ALL, end=" ")
 
@@ -22,23 +19,20 @@ class Node:
             node.run(debug=debug, *args, **kwargs)
 
     def _add_node(self, node):
-        """
-        Add a node to the current node.
-        """
+        """Add a node to the current node."""
+
         self.nodes.append(node)
         return self
 
     def __rrshift__(self, other):
-        """
-        Adds documenation to the node.
-        """
+        """Adds documenation to the node."""
+
         self.documentation = other
         return self
 
     def __or__(self, other):
-        """
-        Add two nodes together.
-        """
+        """Adds two nodes together."""
+
         return self._add_node(other)
 
 
@@ -58,9 +52,8 @@ class Input(Node):
         super().__init__()
 
     def run(self, debug=False, *args, **kwargs):
-        """
-        Runs the node.
-        """
+        """Runs the node."""
+
         if debug and self.documentation:
             print(Fore.YELLOW + "[" + self.documentation + "]" + Style.RESET_ALL, end=" ")
 
