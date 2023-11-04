@@ -42,10 +42,12 @@ class Pipeline(object):
 
         for node in self.nodes:
             if debug and node.documentation:
-                print(Fore.YELLOW + "[" + node.documentation + "]" + Style.RESET_ALL, end=" ")
+                print(
+                    Fore.YELLOW + "[" + node.documentation + "]" + Style.RESET_ALL,
+                    end=" ",
+                )
 
             node._invoke(self.read, self.write, debug=debug)
-
 
     def _add_node(self, node):
         """Adds a node to the pipeline."""
@@ -67,7 +69,7 @@ class Pipeline(object):
 
 class Node:
     """Base unit of conversation."""
-    
+
     def __init__(self):
         self.documentation = None
 
@@ -103,12 +105,10 @@ class Input(Node):
 
         user_input = read(f"{self.prompt}> ")
 
-# Create a function type that takes two arguments: input and output and returns no value
-
 
 class Lambda(Node):
     """Lambda is a node that executes a function with data from the previous node.
-    
+
     The function takes two arguments: read which is the data from the previous node
     and write which is the data that will be passed to the next node.
     """
@@ -125,7 +125,7 @@ class Lambda(Node):
 
 class Router(Node):
     """Router is a pipeline that can provides multiple routes to different nodes
-    
+
     The router can be used to create a menu system.
 
     Example:
@@ -142,7 +142,7 @@ class Router(Node):
     def __init__(self, prompt: str, routes: Dict[str, Pipeline]):
         self.prompt = prompt
         self.routes = routes
-    
+
     def _invoke(self, read, write, *args, **kwargs):
         """Outputs the message."""
 
