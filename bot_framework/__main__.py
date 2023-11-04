@@ -9,7 +9,6 @@ graph =(
     | "Prints what they do" >> Lambda(lambda read, write: write(f"I see, you {read()}"))
     | "Multi-pipeline Router" >> Router(
             prompt="What would you like to buy?",
-            outcomes=["Donut", "Bread", "Sosa"],
             routes={
                 "Donut": (
                   "Donut Pipeline" >> Pipeline()

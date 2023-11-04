@@ -131,7 +131,6 @@ class Router(Node):
     Example:
         Router(
             prompt=lambda read, write: write("What would you like to do?"),
-            outcomes=["Hello", "World", "Exit"],
             routes={
                 "Hello": Output("Hello") | Output("Guys"),
                 "World": Output("World") | Output("Guys"),
@@ -140,10 +139,9 @@ class Router(Node):
         )
     """
 
-    def __init__(self, prompt: str, outcomes: List[str], routes: Dict[str, Pipeline]):
+    def __init__(self, prompt: str, routes: Dict[str, Pipeline]):
         self.prompt = prompt
         self.routes = routes
-        self.outcomes = outcomes
     
     def _invoke(self, read, write, *args, **kwargs):
         """Outputs the message."""
@@ -151,13 +149,13 @@ class Router(Node):
         _prompt = f"""
 {self.prompt}
         
-{", ".join([x for x in self.outcomes])}
+{", ".join([x for x in self.routes.keys()])}
 > """
 
         while True:
             user_input = read(_prompt)
 
-            if user_input not in self.outcomes:
+            if user_input not in self.routes.keys():
                 write("Invalid input")
                 continue
             break
