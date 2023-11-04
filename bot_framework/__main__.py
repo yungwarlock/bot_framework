@@ -1,7 +1,8 @@
-from bot_framework import Output, Input
+from bot_framework import Output, Input, Pipeline
 
 graph =(
-    "Entry point" >> Output(message="Hello")
+    "Entry point" >> Pipeline()
+    | "Prints Hello World" >> Output(message="Hello")
     | "Asks for my name" >> Input("What is your name?")
     | "Prints Hello World" >> Output(message="World")
     | Output(message="From")

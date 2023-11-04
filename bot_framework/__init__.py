@@ -1,6 +1,7 @@
-from bot_framework.nodes import Input, Output
+from bot_framework.nodes import Input, Output, Pipeline
 
 __all__ = [
     "Input",
-    "Output"
+    "Output",
+    "Pipeline",
 ]

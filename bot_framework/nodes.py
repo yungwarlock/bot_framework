@@ -1,25 +1,29 @@
+from typing import List
+
 from colorama import Fore, Style
 
 
-class Node:
-    """Base unit of conversation."""
-    
-    def __init__(self):
-        self.nodes = []
-        self.documentation = None
+class Pipeline:
+    """Pipeline is a class that holds the nodes."""
 
-    def run(self, debug=False, *args, **kwargs):
+    def __init__(self):
+        self.documentation = None
+        self.nodes: List[Node] = []
+
+    def run(self, debug=False):
         """Runs the node."""
 
         if debug and self.documentation:
-            print(Fore.YELLOW + "[" + self.documentation + "]" + Style.RESET_ALL, end=" ")
+            print(Fore.YELLOW + "[" + self.documentation + "]" + Style.RESET_ALL)
 
-        print(self.message)
         for node in self.nodes:
-            node.run(debug=debug, *args, **kwargs)
+            if debug and node.documentation:
+                print(Fore.YELLOW + "[" + node.documentation + "]" + Style.RESET_ALL, end=" ")
+
+            node._invoke()
 
     def _add_node(self, node):
-        """Add a node to the current node."""
+        """Adds a node to the pipeline."""
 
         self.nodes.append(node)
         return self
@@ -31,9 +35,21 @@ class Node:
         return self
 
     def __or__(self, other):
-        """Adds two nodes together."""
+        """Adds a node to the pipeline."""
 
         return self._add_node(other)
+
+class Node:
+    """Base unit of conversation."""
+    
+    def __init__(self):
+        self.documentation = None
+
+    def __rrshift__(self, other):
+        """Adds documenation to the node."""
+
+        self.documentation = other
+        return self
 
 
 class Output(Node):
@@ -43,6 +59,11 @@ class Output(Node):
         self.message = message
         super().__init__()
 
+    def _invoke(self):
+        """Outputs the message."""
+
+        print(self.message)
+
 
 class Input(Node):
     """Input is a node that takes an input from the user."""
@@ -51,12 +72,8 @@ class Input(Node):
         self.prompt = prompt
         super().__init__()
 
-    def run(self, debug=False, *args, **kwargs):
-        """Runs the node."""
-
-        if debug and self.documentation:
-            print(Fore.YELLOW + "[" + self.documentation + "]" + Style.RESET_ALL, end=" ")
+    def _invoke(self):
+        """Takes an input from the user."""
 
         user_input = input(f"{self.prompt}> ")
-        for node in self.nodes:
-            node.run(user_input, *args, **kwargs)
+        print("User wrote:", user_input)
