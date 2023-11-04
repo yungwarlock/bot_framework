@@ -1,7 +1,6 @@
-from bot_framework.nodes import Bot, Input, Output
+from bot_framework.nodes import Input, Output
 
 __all__ = [
-    "Bot",
     "Input",
     "Output"
 ]
